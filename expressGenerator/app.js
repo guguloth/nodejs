@@ -3,6 +3,9 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var mongoose = require('mongoose');
+
+var Dishes = require('./models/dishes');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -10,6 +13,23 @@ var usersRouter = require('./routes/users');
 var dishRouter = require('./routes/dishRouter');
 var promoRouter = require('./routes/promoRouter');
 var leaderRouter = require('./routes/leaderRouter');
+
+const options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  family: 4 // Use IPv4, skip trying IPv6
+  
+}
+mongoose.set('strictQuery', false);
+
+const url = "mongodb://localhost:27017/confusion";
+const connect = mongoose.connect(url,options);
+
+connect.then(() => {
+  console.log("connected correctly to server");
+},(err) => {
+  console.log(err);
+})
 
 var app = express();
 
