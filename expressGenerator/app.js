@@ -1,13 +1,10 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
-var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
-var session = require('express-session');
-var fileStore = require('session-file-store')(session);
 var passport = require('passport');
-var authenticate = require('./authenticate');
+var config = require('./config');
 
 var Dishes = require('./models/dishes');
 
@@ -22,11 +19,10 @@ const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   family: 4 // Use IPv4, skip trying IPv6
-  
 }
 mongoose.set('strictQuery', false);
 
-const url = "mongodb://localhost:27017/confusion";
+const url = config.mongoUrl;
 const connect = mongoose.connect(url,options);
 
 connect.then(() => {
@@ -47,35 +43,13 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // app.use(cookieParser('12345-01236-78955-98745'));
-app.use(session({
-  name:'session-id',
-  secret:'12345-01236-78955-98745',
-  saveUninitialized:false,
-  resave:false,
-  store:new fileStore()
-}))
 
 app.use(passport.initialize());
-app.use(passport.session());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-
-function auth(req,res,next){
-  if(!req.user){
-    var err = new Error('You are not authenticated!');
-    err.status = 403;
-    return next(err);
-  }
-  else{
-      next();
-  }
-}
-
-app.use(auth);
 app.use(express.static(path.join(__dirname, 'public')));
-
 
 app.use('/dishes',dishRouter);
 app.use('/promos',promoRouter);
