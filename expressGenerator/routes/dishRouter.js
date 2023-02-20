@@ -18,7 +18,7 @@ dishRouter.route('/')
         }, (err) => next(err))
         .catch((err) => next(err));
 })
-.post(authenticate.verifyUser, (req,res,next) => {
+.post(authenticate.verifyUser, authenticate.adminUser, (req,res,next) => {
     Dishes.create(req.body)
         .then((dishes) => {
             console.log("Dish is created",dishes);
@@ -29,11 +29,11 @@ dishRouter.route('/')
         .catch((err) => next(err));
 
 })
-.put(authenticate.verifyUser, (req,res,next) => {
+.put(authenticate.verifyUser, authenticate.adminUser, (req,res,next) => {
     res.statusCode = 403;
     res.end("PUT operation is not suported on /dishes");
 })
-.delete(authenticate.verifyUser, (req,res,next) => {
+.delete(authenticate.verifyUser, authenticate.adminUser, (req,res,next) => {
     Dishes.deleteOne()
         .then((resp) => {
             res.statusCode = 200;
@@ -54,11 +54,11 @@ dishRouter.route('/:dishId')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post(authenticate.verifyUser, (req,res,next) => {
+.post(authenticate.verifyUser, authenticate.adminUser, (req,res,next) => {
     res.statusCode = 403;
     res.end("POST operation is not suported on /dishes/" + req.params.dishId);
 })
-.put(authenticate.verifyUser, (req,res,next) => {
+.put(authenticate.verifyUser, authenticate.adminUser, (req,res,next) => {
     Dishes.findByIdAndUpdate(req.params.dishId,{
         $set: req.body
     },{ new :true } )
@@ -69,7 +69,7 @@ dishRouter.route('/:dishId')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.delete(authenticate.verifyUser, (req,res,next) => {
+.delete(authenticate.verifyUser, authenticate.adminUser, (req,res,next) => {
     Dishes.findByIdAndRemove(req.params.dishId)
     .then((resp) => {
         res.statusCode = 200;
@@ -123,7 +123,7 @@ dishRouter.route('/:dishId/comments')
     res.statusCode = 403;
     res.end("PUT operation is not suported on /dishes" + req.params.dishId + "/comments");
 })
-.delete(authenticate.verifyUser, (req,res,next) => {
+.delete(authenticate.verifyUser, authenticate.adminUser, (req,res,next) => {
     Dishes.findById(req.params.dishId)
         .then((dish) => {
             dish.comments.deleteOne();
@@ -159,6 +159,7 @@ dishRouter.route('/:dishId/comments/:commentId')
     .catch((err) => next(err));
 })
 .post(authenticate.verifyUser, (req,res,next) => {
+    console.log(req.user);
     res.statusCode = 403;
     res.end("POST operation is not suported on /dishes/" + req.params.dishId +"comments/" + req.params.commentId);
 })

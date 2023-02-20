@@ -6,8 +6,14 @@ const passport = require('passport');
 const authenticate = require('../authenticate');
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+router.get('/', authenticate.verifyUser, authenticate.adminUser, function(req, res, next) {
+  User.find({})
+    .then((users) => {
+      res.statusCode = 200;
+      res.setHeader('Content-Type','application/json');
+      res.json(users);
+    }, err => next(err))
+    .catch((err) => next(err))
 })
 .post('/signup',(req,res,next) => {
   User.register({username: req.body.username},req.body.password,(err,user) => {

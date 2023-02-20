@@ -20,7 +20,7 @@ var opts = {};
 opts.jwtFromRequest = jwtExtract.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = config.secretekey;
 exports.jwtPassport = passport.use(new jwtStrategy(opts, (jwt_payload, done) => {
-    console.log("jwt payload : ",jwt_payload);
+    console.log("jwt payload : "+JSON.stringify(jwt_payload));
     User.findOne({_id: jwt_payload._id}, (err,user) => {
         if(err){
             return done(err,false);
@@ -31,5 +31,16 @@ exports.jwtPassport = passport.use(new jwtStrategy(opts, (jwt_payload, done) => 
         }
     });
 }));
+
+exports.adminUser = function(req, res, next) {
+    console.log(req)
+    if (req.user.admin){
+      return next();
+    } else {
+      var err = new Error('Only administrators are authorized to perform this operation.');
+      err.status = 403;
+      return next(err);
+    }
+};
 
 exports.verifyUser = passport.authenticate('jwt',{'session':false});
