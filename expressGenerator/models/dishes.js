@@ -15,8 +15,8 @@ const commentSchema = new schema({
         require:true
     },
     author:{
-        type:String,
-        require:true
+        type:schema.Types.ObjectId,
+        ref:'User'
     }
 },{
     timestamps:true
