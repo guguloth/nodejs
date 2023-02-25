@@ -1,1 +1,5 @@
 node_modules
+bin/ca.crt
+bin/ca.key
+bin/cert.crt
+bin/cert.key
