@@ -21,7 +21,7 @@ var opts = {};
 opts.jwtFromRequest = jwtExtract.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = config.secretekey;
 exports.jwtPassport = passport.use(new jwtStrategy(opts, (jwt_payload, done) => {
-    console.log("jwt payload : "+JSON.stringify(jwt_payload));
+    // console.log("jwt payload : "+JSON.stringify(jwt_payload));
     User.findOne({_id: jwt_payload._id}, (err,user) => {
         if(err){
             return done(err,false);
@@ -34,7 +34,6 @@ exports.jwtPassport = passport.use(new jwtStrategy(opts, (jwt_payload, done) => 
 }));
 
 exports.adminUser = function(req, res, next) {
-    console.log(req)
     if (req.user.admin){
       return next();
     } else {
@@ -54,7 +53,7 @@ exports.facebookpassport = passport.use(new facebookTookenStrategy({
         if(err){
             return done(err,null);
         }
-        if(!err && user !== null){
+        if(!err && !!user.length){
             return done(null,user);
         }else{
             user = new User({username: profile.displayName});
