@@ -1,4 +1,6 @@
-nodeExpress/node_modules
 expressGenerator/node_modules
 mongodb/node_modules
+nodeexamples/node_modules
+nodeExpress/node_modules
+nodeHTTP/node_modules
 nodeMongoose/node_modules
